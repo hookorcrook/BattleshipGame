@@ -41,23 +41,22 @@ def setup_ships(player_name, board, ships):
     display_board(board, show_ships=True)
 
 
-def play_game(player1, player2, board1, board2, ships):
-    #Run the main game loop where players take turns guessing the opponents ship positions.
-    print("\nThe game begins!")
-    print("{player1} will start guessing.\n")
+def play_game(player1, player2, board1, board2, ships1, ships2):
+    print("\nLet the battle begin!")
+    print("Player 1: {player1} will start guessing.\n")
     turn = 1
-    guess_boards = [initialize_board(), initialize_board()]  # Initialize the board track guesses for each player
+    guess_boards = [initialize_board(), initialize_board()]  # To track guesses for each player
     boards = [board1, board2]
+    ship_data = [ships1, ships2]
     players = [player1, player2]
-    sunk_ships = [{name: 0 for name, _ in ships} for _ in range(2)]
-    max_hits = sum(size for _, size in ships)
 
     while True:
         active_player = turn % 2
         opponent = 1 - active_player
+
         print(f"\n{players[active_player]}'s Turn!")
         display_board(guess_boards[active_player], show_ships=False)
-        
+
         try:
             guess = input("Enter your guess (e.g., 'A5'): ").upper()
             row, col = ord(guess[0]) - ord('A'), int(guess[1:])
@@ -70,33 +69,29 @@ def play_game(player1, player2, board1, board2, ships):
                 guess_boards[active_player][row][col] = 'X'
                 boards[opponent][row][col] = 'X'
 
-                # Check if a ship has sunk
-                for name, size in ships:
-                    hits = sum(
-                        1 for r in range(26) for c in range(10)
-                        if boards[opponent][r][c] == 'X'
-                    )
-                    if hits == size and sunk_ships[opponent][name] == 0:
-                        sunk_ships[opponent][name] = 1
-                        print(f"SUNK! \n You sunk {players[opponent]}'s {name}!")
+                # Check which ship was hit
+                for ship_name, data in ship_data[opponent].items():
+                    if (row, col) in data["positions"]:
+                        data["hits"] += 1
+                        if data["hits"] == data["size"]:
+                            print(f"SHIP SUNK! \n You sunk {players[opponent]}'s {ship_name}!")
+                        break
             else:
                 print("MISS!")
                 guess_boards[active_player][row][col] = 'O'
                 boards[opponent][row][col] = 'O'
 
-            # Check for game over
-            total_hits = sum(
-                sum(1 for cell in row if cell == 'X') for row in boards[opponent]
-            )
-            if total_hits == max_hits:
+            # Check if the game is over
+            all_ships_sunk = all(data["hits"] == data["size"] for data in ship_data[opponent].values())
+            if all_ships_sunk:
                 print(f"\nGame Over! {players[active_player]} wins!")
-                print(f"Final Boards:")
+                print("\nFinal Boards:")
                 print(f"\n{player1}'s Board:")
                 display_board(board1, show_ships=True)
                 print(f"\n{player2}'s Board:")
                 display_board(board2, show_ships=True)
 
-                # Save game stats in the highscores file
+                # Save game stats
                 save_high_score("highscores.txt", players[active_player], turn)
                 winner, score = get_high_score("highscores.txt")
                 print(f"Current High Score: {winner} with {score} guesses.\n")
@@ -106,6 +101,7 @@ def play_game(player1, player2, board1, board2, ships):
 
         except Exception as e:
             print(f"Error: {e}. Please try again.")
+
 
 
 def main():
