@@ -1,17 +1,15 @@
 def validate_position(board, ship_length, anchor, alignment):
     """
     Validates whether a ship can be placed on the board at the given position and alignment.
-    Args:
+    Params:
         board: The player's board as a 2D list.
         ship_length: Length of the ship.
-        anchor: (row, col) tuple indicating the middle point of the ship.
+        anchor: a (row, col) tuple indicating the middle point of the ship.
         alignment: 'H' for horizontal, 'V' for vertical.
-
-    Returns:
-        bool: True if the position is valid, False otherwise.
     """
     rows, cols = len(board), len(board[0])
     row, col = anchor
+    ##use half_length to validate the placement of the ship such that it is anchored through the middle
     half_length = ship_length // 2
 
     if alignment == 'H':
@@ -36,15 +34,12 @@ def validate_position(board, ship_length, anchor, alignment):
 
 def place_ship(board, ship_length, anchor, alignment):
     """
-    Places a ship on the board if the position is valid.
+    Places a ship on the board if the position is valid (using validate_position function).
     Args:
         board: The player's board as a 2D list.
         ship_length: Length of the ship.
         anchor: (row, col) tuple indicating the middle point of the ship.
         alignment: 'H' for horizontal, 'V' for vertical.
-
-    Returns:
-        bool: True if the ship was placed successfully, False otherwise.
     """
     if not validate_position(board, ship_length, anchor, alignment):
         return False

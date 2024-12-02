@@ -1,7 +1,7 @@
 def save_high_score(file_name, player_name, turns):
     """
     Saves the high score to a file.
-    Args:
+    Params:
         file_name: Name of the file to save scores.
         player_name: Name of the player.
         turns: Number of turns taken by the player to win.
@@ -13,12 +13,10 @@ def save_high_score(file_name, player_name, turns):
 def get_high_score(file_name):
     """
     Reads the high score from a file.
-    Args:
+    Params:
         file_name: Name of the file to read scores.
-
-    Returns:
-        tuple: (player_name, turns) of the highest score (lowest turns).
     """
+    ##Returns a tuple with player_name and turns of the highest score lowest turns.
     try:
         with open(file_name, 'r') as file:
             scores = [line.strip().split(',') for line in file.readlines()]

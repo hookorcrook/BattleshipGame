@@ -4,8 +4,7 @@ from highscores import save_high_score, get_high_score
 
 
 def get_player_names():
-    #Prompt players to enter their names.
-    
+    #Ask players to enter their names.
     print("\nWelcome to Battleship!")
     print("Get ready for an exciting game of strategy and precision.")
     print("Each player will place their ships and take turns guessing enemy ship locations.")
@@ -18,9 +17,7 @@ def get_player_names():
 
 
 def setup_ships(player_name, board, ships):
-    """
-    Allows a player to place their ships on the board.
-    """
+    #Lets the players to place their ships on the board.
     print(f"\n{player_name}, it's time to place your ships.")
     for ship_name, ship_size in ships:
         placed = False
@@ -45,13 +42,11 @@ def setup_ships(player_name, board, ships):
 
 
 def play_game(player1, player2, board1, board2, ships):
-    """
-    Run the main game loop where players take turns guessing.
-    """
+    #Run the main game loop where players take turns guessing the opponents ship positions.
     print("\nThe game begins!")
     print("{player1} will start guessing.\n")
     turn = 1
-    guess_boards = [initialize_board(), initialize_board()]  # To track guesses for each player
+    guess_boards = [initialize_board(), initialize_board()]  # Initialize the board track guesses for each player
     boards = [board1, board2]
     players = [player1, player2]
     sunk_ships = [{name: 0 for name, _ in ships} for _ in range(2)]
@@ -75,7 +70,7 @@ def play_game(player1, player2, board1, board2, ships):
                 guess_boards[active_player][row][col] = 'X'
                 boards[opponent][row][col] = 'X'
 
-                # Check if a ship is sunk
+                # Check if a ship has sunk
                 for name, size in ships:
                     hits = sum(
                         1 for r in range(26) for c in range(10)
@@ -83,7 +78,7 @@ def play_game(player1, player2, board1, board2, ships):
                     )
                     if hits == size and sunk_ships[opponent][name] == 0:
                         sunk_ships[opponent][name] = 1
-                        print(f"You sunk {players[opponent]}'s {name}!")
+                        print(f"SUNK! \n You sunk {players[opponent]}'s {name}!")
             else:
                 print("MISS!")
                 guess_boards[active_player][row][col] = 'O'
@@ -101,7 +96,7 @@ def play_game(player1, player2, board1, board2, ships):
                 print(f"\n{player2}'s Board:")
                 display_board(board2, show_ships=True)
 
-                # Save game stats
+                # Save game stats in the highscores file
                 save_high_score("highscores.txt", players[active_player], turn)
                 winner, score = get_high_score("highscores.txt")
                 print(f"Current High Score: {winner} with {score} guesses.\n")
@@ -114,9 +109,7 @@ def play_game(player1, player2, board1, board2, ships):
 
 
 def main():
-    """
-    Main function to start and manage the game.
-    """
+    #Main function to start and manage the game.
     player1, player2 = get_player_names()
     board1 = initialize_board()
     board2 = initialize_board()
@@ -129,6 +122,7 @@ def main():
         ("Aircraft Carrier", 9),
     ]
 
+    #Setup ships for both the players
     setup_ships(player1, board1, ships)
     setup_ships(player2, board2, ships)
 
@@ -136,7 +130,7 @@ def main():
     if start == 'Y':
         play_game(player1, player2, board1, board2, ships)
     else:
-        print("Exiting the game. Hope you enjoyed it!")
+        print("GAME OVER. Hope you had a good time!")
 
 
 if __name__ == "__main__":
